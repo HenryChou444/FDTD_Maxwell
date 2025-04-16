@@ -7,7 +7,7 @@ from scipy.constants import epsilon_0
 # Parameters
 f = 2.4e9  # Frequency (Hz)
 Lambda = c / f  # Wavelength (m)
-dx = Lambda / 20  # Spatial step (m)
+dx = Lambda / 30  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
 M = 100 # Number of space steps
@@ -35,12 +35,12 @@ for q in range(1, Q): # B_(q'+1/2) [m' + 1/2 = B_q [m]
         B[q, M-1] = B[q-2, M-2]
         
     for m in range(1, M - 1):
-        E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
-        #E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
+        E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
+        #E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
 
 
     for m in range(1, M - 1):
-        B[q, m] = B[q - 1,m] + 1/2 *(E[q, m+1] - E[q, m]) 
+        B[q, m] = B[q - 1,m] + 1/a *(E[q, m+1] - E[q, m]) 
 
 
 
