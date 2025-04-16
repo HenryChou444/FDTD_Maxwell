@@ -5,11 +5,10 @@ from scipy.constants import c
 from scipy.constants import epsilon_0
 
 # Parameters
-f = 2.4e9  # Frequency (Hz)
+f = 2.e9  # Frequency (Hz)
 Lambda = c / f  # Wavelength (m)
 dx = Lambda / 20  # Spatial step (m)
-a = 2
-dt = dx / (a * c)  # Time step (s)
+dt = dx / (2 * c)  # Time step (s)
 M = 100 # Number of space steps
 Q = 300  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
@@ -23,28 +22,28 @@ source_position = M // 2  # Position of the source (int)
 # Parameters for the Gaussian waveform
 sigma = 10*dt # Standard deviation (controls the width of the Gaussian)
 t_0 = 3*sigma # Center of the Gaussian 
-J[:, source_position] = np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian source
+J[:, source_position] = -1*np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian source
 
 
 # Create E field
 E = np.zeros((Q, M))  # Electric field
 B = np.zeros((Q, M))  # Magnetic field
 for q in range(1, Q): # B_(q'+1/2) [m' + 1/2 = B_q [m]
-    for m in range(1, M - 1):
-        E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
-        #E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Noramized J
 #   # Boundary conditions
-    if q > a :
-        E[q, 0] = E[q-a, 1]
-        E[q, M-1] =  E[q-a, M-2]
-        #E[q, 1] = 0
-        #E[q, M-1] = 0
 
+    if q > 1 :
+        E[q, 0] = E[q-2, 1] 
+        E[q, M-1] =  E[q-2, M-2]
     else :
         E[q, 0] = 0
         E[q, M-1] = 0
 
-    for m in range(1, M - 1):
+    for m in range(1, M - 2):
+        E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
+        #E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Noramized J
+
+
+    for m in range(0, M - 1):
         B[q, m] = B[q - 1,m] + 1/2 *(E[q, m+1] - E[q, m])    
 
 
@@ -68,7 +67,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Save the animation
-#ani.save("1D_gaussian_source_free_space_boundary_zero.mp4", fps=60)
+ani.save("reflexion_non_voulue.mp4", fps=60)
 
 # Show the animation
 plt.show()
