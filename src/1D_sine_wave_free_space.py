@@ -2,8 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import c
-from scipy.constants import epsilon_0et
-dx = Lambda / 20  # Spatial step (m)
+from scipy.constants import epsilon_0
+
+# Parameters
+f = 2.4e9  # Frequency (Hz)
+Lambda = c / f  # Wavelength (m)
+dx = Lambda / 50  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
 M = 150 # Number of space steps
