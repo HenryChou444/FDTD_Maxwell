@@ -27,26 +27,22 @@ J[:, source_position] = np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian 
 
 
 # Create E field
-E = np.zeros((Q, M))  # Electric field
-B = np.zeros((Q, M))  # Magnetic field
-# Create E field
-E = np.zeros((Q, M))  # Electric field
-B = np.zeros((Q, M))  # Magnetic field
-for q in range(1, Q): # B_(q'+1/2) [m' + 1/2 = B_q [m]
+E = np.zeros((Q, M))  # Electric field, last sample is (Q-1, M-1)
+B = np.zeros((Q, M-1))  # Magnetic field, last sample is (Q-1, M-2)
+for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m]
 #   # Boundary conditions
 
     if q > 1 :
         E[q, 0] = E[q-2, 1] 
         E[q, M-1] =  E[q-2, M-2]
         
-        
-    for m in range(1, M - 1):
+    for m in range(1, M - 1): #1 compris, M-1 exclu
         E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
         #E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
 
 
-    for m in range(0, M - 1):
-        B[q, m] = B[q - 1,m] + 1/2 *(E[q, m+1] - E[q, m])    
+    for m in range(0, M - 1): #0 compris, M-1 exclu
+        B[q, m] = B[q - 1,m] + 1/2 *(E[q, m+1] - E[q, m])   
 
 
 
