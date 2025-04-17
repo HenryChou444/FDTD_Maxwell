@@ -28,4 +28,6 @@ plt.ylabel("Amplitude [V/m]", fontsize=14)
 plt.xlim(0, (M - 1) * dx)
 plt.ylim(0, 0.5)
 plt.grid()
+# Save the figure with high quality
+plt.savefig("amplitude_plot.pdf", dpi=300, bbox_inches="tight")
 plt.show()
