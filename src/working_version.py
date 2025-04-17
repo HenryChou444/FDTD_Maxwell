@@ -34,15 +34,15 @@ for q in range(1, Q): # B_(q'+1/2) [m' + 1/2 = B_q [m]
     if q > 1 :
         E[q, 0] = E[q-2, 1] 
         E[q, M-1] =  E[q-2, M-2]
-        B[q, 0] = B[q-2, 1]
-        B[q, M-1] = B[q-2, M-2]
+        #B[q, 0] = B[q-2, 1]
+        #B[q, M-1] = B[q-2, M-2]
         
     for m in range(1, M - 1):
         E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
         #E[q, m] = E[q - 1, m] + 1/2 *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
 
 
-    for m in range(1, M - 1):
+    for m in range(0, M - 1):
         B[q, m] = B[q - 1,m] + 1/2 *(E[q, m+1] - E[q, m])    
 
 
