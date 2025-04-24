@@ -7,7 +7,7 @@ from scipy.constants import epsilon_0
 # Parameters
 f = 2.4e9  # Frequency (Hz)
 Lambda = c / f  # Wavelength (m)
-dx = Lambda / 50  # Spatial step (m)
+dx = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
 M = 100 # Number of space steps
@@ -24,26 +24,27 @@ source_position = M // 2  # Position of the source (int)
 # Parameters for the Gaussian waveform
 sigma = 10*dt # Standard deviation (controls the width of the Gaussian)
 t_0 = 3*sigma # Center of the Gaussian 
-J[:, source_position] = np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian source
+J[:, source_position] = -np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian source
 
 
 # Create E field
 E = np.zeros((Q, M))  # Electric field, last sample is (Q-1, M-1)
-B = np.zeros((Q, M-1))  # Magnetic field, last sample is (Q-1, M-2)
-for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m]
+B = np.zeros((Q-1, M-1))  # Magnetic field, last sample is (Q-2, M-2)
+
+for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m] ; début à q=1, car C.I nulles
+
 #   # Boundary conditions
-
     if q > 1 :
-        E[q, 0] = E[q-2, 1] 
-        E[q, M-1] =  E[q-2, M-2]
-        
+        E[q, 0] = E[q-a, 1] 
+        E[q, M-1] =  E[q-a, M-2]
+   
     for m in range(1, M - 1): #1 compris, M-1 exclu
-        E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
-        #E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
+        #E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
+        E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (J[q-1,m]) #Normalized J
 
-
-    for m in range(0, M - 1): #0 compris, M-1 exclu
-        B[q, m] = B[q - 1,m] + 1/a *(E[q, m+1] - E[q, m])   
+    if q < Q-1: #Ne calcule pas la dernière ligne de B (pas utile pour trouver E)
+        for m in range(0, M - 1): #0 compris, M-1 exclu
+            B[q, m] = B[q - 1,m] + 1/a *(E[q, m+1] - E[q, m])   
 
 
 
