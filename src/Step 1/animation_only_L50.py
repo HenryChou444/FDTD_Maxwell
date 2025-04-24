@@ -2,9 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import c
+import os
+# Get the directory of the current script
+script_dir = os.path.dirname(__file__)
+
+# Construct the full path to the file
+file_path = os.path.join(script_dir, "E_matrix_1D_sine.npy")
+
+# Load the matrix
+E = np.load(file_path)
 
 
-E = np.load("E_matrix_1D_sine.npy")  # Load the electric field matrix
 # Parameters
 f = 2.4e9  # Frequency (Hz)
 Lambda = c / f  # Wavelength (m)

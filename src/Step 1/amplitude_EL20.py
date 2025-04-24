@@ -1,9 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import c
+import os
 
+# Get the directory of the current script
+script_dir = os.path.dirname(__file__)
 
-E = np.load("E_matrix_L20.npy")  # Load the electric field matrix
+# Construct the full path for saving the file
+file_path = os.path.join(script_dir, "E_matrix_L20.npy")
+
+E = np.load(file_path)  # Load the electric field matrix
 # Parameters
 f = 2.4e9  # Frequency (Hz)
 Lambda = c / f  # Wavelength (m)

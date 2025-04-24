@@ -2,7 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.constants import c
-E = np.load("E_matrix_L20.npy")  
+import os
+# Get the directory of the current script
+script_dir = os.path.dirname(__file__)
+
+# Construct the full path to the file
+file_path = os.path.join(script_dir, "E_matrix_L20.npy")
+
+# Load the matrix
+E = np.load(file_path)
 
 # Parameters
 f = 2.4e9  # Frequency (Hz)
