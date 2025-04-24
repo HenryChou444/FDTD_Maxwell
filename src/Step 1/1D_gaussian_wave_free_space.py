@@ -20,6 +20,7 @@ t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Create Jz
 J = np.zeros((Q, M))  # Current density
 source_position = M // 2  # Position of the source (int)
+
 # Parameters for the Gaussian waveform
 sigma = 10*dt # Standard deviation (controls the width of the Gaussian)
 t_0 = 3*sigma # Center of the Gaussian 
