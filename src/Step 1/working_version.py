@@ -64,7 +64,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Save the animation
-ani.save("reflexion_non_voulue.mp4", fps=60)
+#ani.save("reflexion_non_voulue.mp4", fps=60)
 
 # Show the animation
 plt.show()
