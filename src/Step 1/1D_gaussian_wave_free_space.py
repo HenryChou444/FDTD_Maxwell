@@ -67,7 +67,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Save the animation
-ani.save("1D_gaussian_source_free_spac_boundary_zero.mp4", fps=60)
+#ani.save("1D_gaussian_source_free_spac_boundary_zero.mp4", fps=60)
 
 # Show the animation
 plt.show()

@@ -59,10 +59,22 @@ def update(frame):
     return animated_source,
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
+#ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Save the animation
 #ani.save("1D_sine_source_free_space_boundary_zero.mp4", fps=60)
 
 # Show the animation
+
+q_specific = 123  # Replace with the desired time step
+plt.figure()  # Create a new figure
+plt.plot(x, E[q_specific, :])
+plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+plt.xlabel("x [m]")
+plt.ylabel("E [V/m]")
+#plt.legend()
+#plt.grid()
+
+
 plt.show()
