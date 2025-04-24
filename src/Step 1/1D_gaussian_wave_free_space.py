@@ -34,7 +34,7 @@ B = np.zeros((Q-1, M-1))  # Magnetic field, last sample is (Q-2, M-2)
 for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m] ; début à q=1, car C.I nulles
 
 #   # Boundary conditions
-    if q > 1 :
+    if q > a - 1 :
         E[q, 0] = E[q-a, 1] 
         E[q, M-1] =  E[q-a, M-2]
    
