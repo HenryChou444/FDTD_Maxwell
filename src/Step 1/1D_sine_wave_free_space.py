@@ -10,8 +10,8 @@ Lambda = c / f  # Wavelength (m)
 dx = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
-M = 150 # Number of space steps
-Q = 500  # Number of time steps
+M = 21 *5 # Number of space steps
+Q = 400  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 #print(f"dt/e0 = {dt/epsilon_0}")  # 1.1764677777163337
@@ -19,7 +19,7 @@ t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Create Jz
 omega = 2 * np.pi * f  # Angular frequency
 J = np.zeros((Q, M))  # Current density
-source_position = M // 2  # Position of the source (int)
+source_position = (M // 2)  # Position of the source (int)
 J[:, source_position] = -np.sin(omega * t)  # Sine wave source
 
 # Create E field
@@ -47,7 +47,7 @@ for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m] ; début à q=1, car C.I
 fig, ax = plt.subplots()
 animated_source, = ax.plot([], [])  # E
 ax.set_xlim(0, (M - 1) * dx)
-ax.set_ylim(-1.5, 1.5)
+ax.set_ylim(-3, 3)
 ax.set_xlabel("x [m]")
 ax.set_ylabel("E [V/m]")
 ax.set_title("1D FDTD")
@@ -59,20 +59,20 @@ def update(frame):
     return animated_source,
 
 # Create the animation
-#ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
+ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Save the animation
-#ani.save("1D_sine_source_free_space_boundary_zero.mp4", fps=60)
+#ani.save("1D_sine_source_free_space_boundary_zero_standing.mp4", fps=60)
 
 # Show the animation
 
-q_specific = 123  # Replace with the desired time step
-plt.figure()  # Create a new figure
-plt.plot(x, E[q_specific, :])
-plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
-plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
-plt.xlabel("x [m]")
-plt.ylabel("E [V/m]")
+# q_specific = 123  # Replace with the desired time step
+# plt.figure()  # Create a new figure
+# plt.plot(x, E[q_specific, :])
+# plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+# plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+# plt.xlabel("x [m]")
+# plt.ylabel("E [V/m]")
 #plt.legend()
 #plt.grid()
 
