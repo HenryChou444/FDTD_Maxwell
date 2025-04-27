@@ -50,10 +50,10 @@ def update(frame):
         reset()
     
     if frame > 0:
-        # E_boundary[0, 0] = E_boundary[1, 0]  # Update left boundary
-        # E_boundary[1, 0] = E[0, 1]  # Store next left boundary
-        # E_boundary[0, 1] = E_boundary[1, 1]  # Update right boundary
-        # E_boundary[1, 1] = E[0, M-2]  # Store next right boundary
+        E_boundary[0, 0] = E_boundary[1, 0]  # Update left boundary
+        E_boundary[1, 0] = E[0, 1]  # Store next left boundary
+        E_boundary[0, 1] = E_boundary[1, 1]  # Update right boundary
+        E_boundary[1, 1] = E[0, M-2]  # Store next right boundary
         for m in range(1, M - 1): #1 compris, M-1 exclu
             E[0, m] = E[0, m] + 1/a *(B[0, m]- B[0, m-1]) - (J[frame,m]) #Normalized J
         #print(f"E[1, :] at frame {frame}: {E[1, :]}")
