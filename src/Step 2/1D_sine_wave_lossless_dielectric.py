@@ -12,8 +12,8 @@ dx = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
 e_r = 6 # Relative permittivity of concrete
-M = 300 # Number of space steps
-Q = 400  # Number of time steps
+M = 200 # Number of space steps
+Q = 500  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Permittivity grid
