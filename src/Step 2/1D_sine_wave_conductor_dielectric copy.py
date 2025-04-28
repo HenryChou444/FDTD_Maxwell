@@ -11,18 +11,18 @@ Lambda = c / f  # Wavelength (m)
 dx = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
-e_r = 6 # Relative permittivity of concrete
+e_r = 4 # Relative permittivity of ground
 M = 200 # Number of space steps
 Q = 800  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Permittivity grid
 wall_start = 3 * M // 5   # Start of the wall
-wall_width = M // 10   # Width of the wall
+wall_width = M // 4   # Width of the wall
 epsilon_r = np.ones((1, M))
 epsilon_r[0, wall_start : wall_start + wall_width] = e_r
 sigma = np.zeros((1, M))  # Conductivity grid
-sigma[0, wall_start : wall_start + wall_width] = 0.01
+sigma[0, wall_start : wall_start + wall_width] = 0.1 # Conductivity of the ground
 #print(f"dt/e0 = {dt/epsilon_0}")  # 1.1764677777163337
 
 # Create Jz
@@ -90,13 +90,32 @@ def update(frame):
     animated_source.set_data(x, E[0, :]) # Update E field
     #ax.set_title(f"1D FDTD - Frame {frame}")
     #print(f"Updated frame {frame}")
+
+    # # Figure at a specific time step
+    if frame == 605 :  # Replace with the desired time step
+        # Create a new figure
+        fig_new, ax_new = plt.subplots()
+        ax_new.plot(x, E[0, :], label=f"Frame {frame}")
+        ax_new.set_xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+        ax_new.set_ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+        ax_new.set_xlabel("x [m]", fontsize=24)
+        ax_new.set_ylabel("E [V/m]", fontsize=24)
+        ax_new.tick_params(axis='both', which='major', labelsize=14)
+
+        # Add the rectangle patch for the wall
+        wall_new = Rectangle(((wall_start - 1) * dx, -wall_height), wall_width * dx, 2 * wall_height,
+                            linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
+        ax_new.add_patch(wall_new)
+
+        # Show the new plot
+        plt.show()
     return animated_source, ax.title
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
 
 # Save the animation
-#ani.save("1D_sine_source_lossless_dielectric.mp4", fps=60)
+#ani.save("1D_sine_source_conductor_dielectric.mp4", fps=60)
 
 # Show the animation
 
