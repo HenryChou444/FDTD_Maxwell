@@ -29,9 +29,9 @@ B = np.zeros((Q, M-1))  # Magnetic field, last sample is (Q-1, M-2)
 for q in range(1, Q): # B_(q'+1/2) [m' + 1/2] = B_q [m] ; début à q=1, car C.I nulles
 
 #   # Boundary conditions
-    # if q > a - 1 :
-    #     E[q, 0] = E[q-a, 1] 
-    #     E[q, M-1] =  E[q-a, M-2]
+    if q > a - 1 :
+        E[q, 0] = E[q-a, 1] 
+        E[q, M-1] =  E[q-a, M-2]
    
     for m in range(1, M - 1): #1 compris, M-1 exclu
         #E[q, m] = E[q - 1, m] + 1/a *(B[q-1, m]- B[q-1, m-1]) - (dt / epsilon_0) * (J[q-1,m])
@@ -66,13 +66,14 @@ ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 # Show the animation
 
-# q_specific = 123  # Replace with the desired time step
-# plt.figure()  # Create a new figure
-# plt.plot(x, E[q_specific, :])
-# plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
-# plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
-# plt.xlabel("x [m]")
-# plt.ylabel("E [V/m]")
+q_specific = 90  # Replace with the desired time step
+plt.figure()  # Create a new figure
+plt.plot(x, E[q_specific, :])
+plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+plt.xlabel("x [m]",fontsize=24)
+plt.ylabel("E [V/m]", fontsize=24)
+plt.tick_params(axis='both', which='major', labelsize=18)  # Adjust the font size as needed
 #plt.legend()
 #plt.grid()
 

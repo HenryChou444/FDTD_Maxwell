@@ -69,5 +69,14 @@ ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 # Save the animation
 #ani.save("1D_gaussian_source_free_spac_boundary_zero.mp4", fps=60)
 
+q_specific = 80  # Replace with the desired time step
+plt.figure()  # Create a new figure
+plt.plot(x, E[q_specific, :])
+plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+plt.xlabel("x [m]",fontsize=24)
+plt.ylabel("E [V/m]", fontsize=24)
+plt.tick_params(axis='both', which='major', labelsize=18)  # Adjust the font size as needed
+
 # Show the animation
 plt.show()

@@ -29,9 +29,11 @@ for m in range(0, M):
 plt.figure()
 plt.plot(x, amplitude)
 plt.title("")
-plt.xlabel("x [m]", fontsize=14)
-plt.ylabel("Amplitude [V/m]", fontsize=14)
+plt.xlabel("x [m]", fontsize=24)
+plt.ylabel("Amplitude [V/m]", fontsize=24)
 plt.xlim(0, (M - 1) * dx)
 plt.ylim(0, 1.5)
+# Increase the size of the tick labels
+plt.tick_params(axis='both', which='major', labelsize=18)  # Adjust the font size as needed
 plt.grid()
 plt.show()
