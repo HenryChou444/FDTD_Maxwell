@@ -24,10 +24,13 @@ epsilon_r[0, wall_start : wall_start + wall_width] = e_r
 #print(f"dt/e0 = {dt/epsilon_0}")  # 1.1764677777163337
 
 # Create Jz
-omega = 2 * np.pi * f  # Angular frequency
 J = np.zeros((Q, M))  # Current density
-source_position = (M // 2)  # Position of the source (int)
-J[:, source_position] = -np.sin(omega * t)  # Sine wave source
+source_position = M // 2  # Position of the source (int)
+
+# Parameters for the Gaussian waveform
+sigma = 10*dt # Standard deviation (controls the width of the Gaussian)
+t_0 = 3*sigma # Center of the Gaussian 
+J[:, source_position] = -np.exp(-((t - t_0) ** 2) / (2 * sigma ** 2)) # Gaussian source
 
 # Create Fields
 E = np.zeros((1, M))  # Electric field, last sample is (M-1)
@@ -91,7 +94,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
 
 # Save the animation
-ani.save("1D_sine_source_lossless_dielectric_v1.mp4", fps=60)
+ani.save("1D_gaussian_source_lossless_dielectric_v1.mp4", fps=60)
 
 # Show the animation
 
