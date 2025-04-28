@@ -13,7 +13,7 @@ a = 2
 dt = dx / (a * c)  # Time step (s)
 e_r = 6 # Relative permittivity of concrete
 M = 200 # Number of space steps
-Q = 500  # Number of time steps
+Q = 800  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Permittivity grid
@@ -42,7 +42,7 @@ wall_height = 4  # Height of the wall (adjust as needed)
 wall = Rectangle(((wall_start-1) * dx , -wall_height), wall_width*dx, 2 * wall_height, linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
 ax.add_patch(wall)
 ax.set_xlim(0, (M - 1) * dx)
-ax.set_ylim(-3, 3)
+ax.set_ylim(-2, 2)
 ax.set_xlabel("x [m]")
 ax.set_ylabel("E [V/m]")
 ax.set_title("1D FDTD")
@@ -91,7 +91,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
 
 # Save the animation
-ani.save("1D_sine_source_lossless_dielectric_v1.mp4", fps=60)
+ani.save("1D_sine_source_lossless_dielectric.mp4", fps=60)
 
 # Show the animation
 

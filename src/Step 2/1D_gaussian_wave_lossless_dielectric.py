@@ -12,8 +12,8 @@ dx = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
 e_r = 6 # Relative permittivity of concrete
-M = 200 # Number of space steps
-Q = 500  # Number of time steps
+M = 250 # Number of space steps
+Q = 800  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 # Permittivity grid
@@ -45,7 +45,7 @@ wall_height = 4  # Height of the wall (adjust as needed)
 wall = Rectangle(((wall_start-1) * dx , -wall_height), wall_width*dx, 2 * wall_height, linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
 ax.add_patch(wall)
 ax.set_xlim(0, (M - 1) * dx)
-ax.set_ylim(-3, 3)
+ax.set_ylim(-2, 2)
 ax.set_xlabel("x [m]")
 ax.set_ylabel("E [V/m]")
 ax.set_title("1D FDTD")
@@ -88,15 +88,34 @@ def update(frame):
     animated_source.set_data(x, E[0, :]) # Update E field
     #ax.set_title(f"1D FDTD - Frame {frame}")
     #print(f"Updated frame {frame}")
+
+    # Figure at a specific time step
+    if frame == 250:  # Replace with the desired time step
+        # Create a new figure
+        fig_new, ax_new = plt.subplots()
+        ax_new.plot(x, E[0, :], label=f"Frame {frame}")
+        ax_new.set_xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
+        ax_new.set_ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+        ax_new.set_xlabel("x [m]", fontsize=24)
+        ax_new.set_ylabel("E [V/m]", fontsize=24)
+        ax_new.tick_params(axis='both', which='major', labelsize=14)
+
+        # Add the rectangle patch for the wall
+        wall_new = Rectangle(((wall_start - 1) * dx, -wall_height), wall_width * dx, 2 * wall_height,
+                            linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
+        ax_new.add_patch(wall_new)
+
+        # Show the new plot
+        plt.show()
     return animated_source, ax.title
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
 
 # Save the animation
-ani.save("1D_gaussian_source_lossless_dielectric_v1.mp4", fps=60)
+#ani.save("1D_gaussian_source_lossless_dielectric.mp4", fps=60)
 
-# Show the animation
+
 
 # q_specific = 123  # Replace with the desired time step
 # plt.figure()  # Create a new figure
@@ -108,5 +127,5 @@ ani.save("1D_gaussian_source_lossless_dielectric_v1.mp4", fps=60)
 #plt.legend()
 #plt.grid()
 
-
+# Show the animation
 plt.show()
