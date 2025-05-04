@@ -4,6 +4,7 @@ from matplotlib.animation import FuncAnimation
 from scipy.constants import c
 from scipy.constants import epsilon_0
 from matplotlib.patches import Rectangle
+from matplotlib.colors import Normalize
 
 # Parameters
 f = 2.4e9  # Frequency (Hz)
@@ -15,7 +16,7 @@ dt = dx / (a * c)  # Time step (s)
 e_r = 4 # Relative permittivity of ground
 M = 200 # Number of x steps
 N = 200 # Number of y steps
-Q = 300  # Number of time steps
+Q = 150  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 y = np.linspace(0, (M - 1) * dy, N)  # Not really used, but clearer that way
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
@@ -31,20 +32,23 @@ sigma = np.zeros((N, M))  # Conductivity grid
 # Create Jz
 omega = 2 * np.pi * f  # Angular frequency
 J = np.zeros((N, M))  # Current density
-source_position = (M // 2)  # Position of the source (int)
+source_position_x = (M // 2)  # Position of the source (int)
+source_position_y = (N // 2)  # Position of the source (int)
 
 
 # Create Fields
 E = np.zeros((N, M))  # Electric field, last sample is (M-1)
+E_max = np.zeros((N, M))  # Electric field amplitude
 Bx = np.zeros((N-1, M))  #
 By = np.zeros((N, M-1))  # Magnetic field, last sample is (M-2)
 
 
 # Initialize the figure for 2D plotting
 fig, ax = plt.subplots()
-im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="viridis")
+norm = Normalize(vmin=-0.1, vmax=0.1)  # Initial normalization (vmax will be updated dynamically)
+im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm)
 cbar = fig.colorbar(im, ax=ax)
-cbar.set_label("Amplitude de $E_z$ [V/m]", fontsize=14)
+cbar.set_label("Intensité de $E_z$ [V/m]", fontsize=14)
 ax.set_xlim(0, (M - 1) * dx)
 ax.set_ylim(0, (N - 1) * dy)
 ax.set_xlabel("x [m]", fontsize=14)
@@ -72,11 +76,13 @@ def update(frame):
     if frame == 0:  # Reset at the start of the animation
         reset()
     if frame > 0:
-        J[source_position, source_position] = -np.sin(omega * frame * dt)  # Sine wave source
+        J[source_position_y, source_position_x] = -np.sin(omega * frame * dt) # Sine wave source
         for n in range(1, N - 1):
             for m in range(1, M - 1): #1 compris, M-1 exclu
                 if sigma[0, m] == 0:
                     E[n, m] = E[n, m] + 1/a/epsilon_r[n,m] * (Bx[n, m]- Bx[n-1, m] + By[n , m] - By[n, m-1]) - (J[n,m])/epsilon_r[n,m] #Normalized J
+                    if abs(E[n, m]) > E_max[n, m]:
+                        E_max[n, m] = abs(E[n, m])
                 else:
                     E[0, m] = (1- sigma[0,m]/epsilon_r[0,m])*E[0, m] + 1/a/epsilon_r[0,m] * (B[0, m]- B[0, m-1])
         print(f"E[M//2, M//2] at frame {frame}: {E[M//2, M//2]}")
@@ -119,11 +125,11 @@ def update(frame):
     return [im], ax.title
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
-
+ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
+plt.show()
 # Save the animation
-ani.save("2D_sine_source_free_space.mp4", fps=45) #Must save before plt.show() but then additional waiting time
-print("Animation saved")
+#ani.save("2D_sine_source_free_space_J_test.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+#print("Animation saved")
 # Show the animation
 
 # q_specific = 123  # Replace with the desired time step
@@ -135,6 +141,40 @@ print("Animation saved")
 # plt.ylabel("E [V/m]")
 #plt.legend()
 #plt.grid()
+
+# Plot E_max in a 2D plot
+fig_max, ax_max = plt.subplots()
+
+# Normalize E_max to its maximum value
+norm_max = Normalize(vmin=0, vmax=np.max(E_max))
+
+# Create the 2D plot for E_max
+im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=norm_max)
+cbar_max = fig_max.colorbar(im_max, ax=ax_max)
+cbar_max.set_label("Amplitude [V/m]", fontsize=14)
+
+# Set axis labels and title
+ax_max.set_xlim(0, (M - 1) * dx)
+ax_max.set_ylim(0, (N - 1) * dy)
+ax_max.set_xlabel("x [m]", fontsize=14)
+ax_max.set_ylabel("y [m]", fontsize=14)
+#ax_max.set_title("Amplitude maximale de $E_z$", fontsize=14)
+
+# Extract the cut of E_max
+cut_start = M // 2
+cut_end = cut_start + 100
+E_max_cut = E_max[N // 2, cut_start:cut_end]
+
+# Create the x-axis for the cut
+x_cut = np.linspace(0, (cut_end - cut_start - 1) * dx, cut_end - cut_start)
+
+# Plot the cut
+fig_cut, ax_cut = plt.subplots()
+ax_cut.plot(x_cut, E_max_cut, label="Cut of $E_{max}$", color="blue")
+ax_cut.set_xlabel("Distance à la source [m]", fontsize=14)
+ax_cut.set_ylabel("Amplitude [V/m]", fontsize=14)
+#ax_cut.set_title("Cut of $E_{max}$ at y = N/2", fontsize=14)
+ax_cut.grid()
 
 plt.show()
 
