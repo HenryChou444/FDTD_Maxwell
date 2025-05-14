@@ -43,7 +43,7 @@ fig, ax = plt.subplots()
 norm = Normalize(vmin=-0.1, vmax=0.1)  # Initial normalization (vmax will be updated dynamically)
 im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm)
 cbar = fig.colorbar(im, ax=ax)
-cbar.set_label("Intensité de $E_z$ [V/m]", fontsize=14)
+cbar.set_label("$E_z$ [V/m]", fontsize=14)
 ax.set_xlim(0, (M - 1) * dx)
 ax.set_ylim(0, (N - 1) * dy)
 ax.set_xlabel("x [m]", fontsize=14)
@@ -69,7 +69,7 @@ def update(frame):
         for n in range(1, N - 1):
             for m in range(1, M - 1): #1 compris, M-1 exclu
                 if sigma[0, m] == 0:
-                    E[n, m] = E[n, m] + 1/a/epsilon_r[n,m] * (Bx[n, m]- Bx[n-1, m] + By[n , m] - By[n, m-1]) - (J[n,m])/epsilon_r[n,m] #Normalized J
+                    E[n, m] = E[n, m] + 1/a/epsilon_r[n,m] * (-Bx[n, m] + Bx[n-1, m] + By[n , m] - By[n, m-1]) - (J[n,m])/epsilon_r[n,m] #Normalized J
                     if abs(E[n, m]) > E_max[n, m]:
                         E_max[n, m] = abs(E[n, m])
                 else:
@@ -80,7 +80,7 @@ def update(frame):
         if frame < Q-1: #Ne calcule pas la dernière ligne de B (pas utile pour trouver E)
             for n in range(0, N - 1): 
                 for m in range(1, M - 1): #0 compris, M-1 exclu
-                    Bx[n, m] = Bx[n,m] + 1/a *(E[n+1, m] - E[n, m]) 
+                    Bx[n, m] = Bx[n,m] - 1/a *(E[n+1, m] - E[n, m]) 
 
             for n in range(1, N - 1): 
                 for m in range(0, M - 1): #0 compris, M-1 exclu
@@ -91,9 +91,9 @@ def update(frame):
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
-plt.show()
 # Save the animation
-#ani.save("2D_sine_source_free_space_J_test.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+#ani.save("2D_sine_source_free_space_jet.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+plt.show()
 #print("Animation saved")
 # Show the animation
 
