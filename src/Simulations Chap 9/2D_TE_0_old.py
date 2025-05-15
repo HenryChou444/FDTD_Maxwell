@@ -17,7 +17,7 @@ dt = dx / (a * c)  # Time step (s)
 e_r = 4 # Relative permittivity of ground
 M = 200 # Number of x steps
 N = 200 # Number of y steps
-Q = 500  # Number of time steps
+Q = 150  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 y = np.linspace(0, (M - 1) * dy, N)  # Not really used, but clearer that way
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
@@ -25,8 +25,8 @@ epsilon_r = np.ones((N, M))
 sigma = np.zeros((N, M))  # Conductivity grid
 
 # Add perfect conductor wall
-sigma[N//2 + 10, :] = -1  # -1 instead of +inf for the code
-sigma[N//2 - 10, :] = -1  # Perfect conductor wall
+sigma[N//2 + 4, :] = -1  # -1 instead of +inf for the code
+sigma[N//2 - 4, :] = -1  # Perfect conductor wall
 
 # Create Jz
 omega = 2 * np.pi * f  # Angular frequency
@@ -44,22 +44,22 @@ By = np.zeros((N, M-1))  # Magnetic field, last sample is (M-2)
 
 # Initialize the figure for 2D plotting
 fig, ax = plt.subplots()
-norm = Normalize(vmin=-0.1, vmax=0.1)  # Initial normalization (vmax will be updated dynamically)
-im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm)
-cbar = fig.colorbar(im, ax=ax)
+im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet")
+cbar = fig.colorbar(im, ax=ax, orientation='horizontal', pad=0.1, shrink=1, aspect=100)
 cbar.set_label("$E_z$ [V/m]", fontsize=14)
+
 ax.set_xlim(0, (M - 1) * dx)
-ax.set_ylim(0, (N - 1) * dy)
 ax.set_xlabel("x [m]", fontsize=14)
 ax.set_ylabel("y [m]", fontsize=14)
 ax.set_title("2D FDTD Simulation", fontsize=14)
 
 # Draw horizontal red lines for the conductor walls and add legend
-y1 = (N // 2 + 10) * dy
-y2 = (N // 2 - 10) * dy
-line1 = ax.axhline(y=y1, color='red', linewidth=2, label='Mur Conducteur')
-line2 = ax.axhline(y=y2, color='red', linewidth=2)
-ax.legend(loc='upper right')
+y1 = (N // 2 + 4) * dy
+y2 = (N // 2 - 4) * dy
+ax.set_ylim(y2, y1)
+# line1 = ax.axhline(y=y1, color='red', linewidth=4, label='Mur Conducteur')
+# line2 = ax.axhline(y=y2, color='red', linewidth=5)
+#ax.legend(loc='upper right')
 
 
 # Reset function to set all vectors to zero
@@ -104,9 +104,9 @@ def update(frame):
     return [im], ax.title
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
+ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=True)
 # Save the animation
-#ani.save("2D_sine_source_double_conductor_wall_jet.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+#ani.save("2D_TE_0_jet.mp4", fps=45) #Must save before plt.show() but then additional waiting time
 plt.show()
 #print("Animation saved")
 # Show the animation
@@ -114,57 +114,57 @@ plt.show()
 
 
 
-# Plot E_max in a 2D plot
-fig_max, ax_max = plt.subplots()
+# # Plot E_max in a 2D plot
+# fig_max, ax_max = plt.subplots()
 
-# Normalize E_max to its maximum value
-norm_max = Normalize(vmin=np.percentile(E_max, 5), vmax= E_max[N//2, M//2 + 2])
-#norm_max = LogNorm(vmin=1e-5, vmax= np.max(E_max))
-# Create the 2D plot for E_max
-im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_max)
-#im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(E_max[E_max > 0]), vmax=np.max(E_max)))
-cbar_max = fig_max.colorbar(im_max, ax=ax_max)
-cbar_max.set_label("Amplitude [V/m]", fontsize=14)
+# # Normalize E_max to its maximum value
+# norm_max = Normalize(vmin=np.percentile(E_max, 5), vmax= E_max[N//2, M//2 + 2])
+# #norm_max = LogNorm(vmin=1e-5, vmax= np.max(E_max))
+# # Create the 2D plot for E_max
+# im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_max)
+# #im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(E_max[E_max > 0]), vmax=np.max(E_max)))
+# cbar_max = fig_max.colorbar(im_max, ax=ax_max)
+# cbar_max.set_label("Amplitude [V/m]", fontsize=14)
 
-# Set axis labels and title
-ax_max.set_xlim(0.14, 1.1)
-ax_max.set_ylim(0.14, 1.1)
-ax_max.set_xlabel("x [m]", fontsize=14)
-ax_max.set_ylabel("y [m]", fontsize=14)
+# # Set axis labels and title
+# ax_max.set_xlim(0.14, 1.1)
+# ax_max.set_ylim(0.14, 1.1)
+# ax_max.set_xlabel("x [m]", fontsize=14)
+# ax_max.set_ylabel("y [m]", fontsize=14)
 
-V = E_max * Lambda/np.pi # Voltage (V)
-P = (1/2) *(50/123**2) * V**2 # Power (W)
-# Normalize E_max to its maximum value
-norm_V = Normalize(vmin=0, vmax=V[N//2, M//2 + 2])  # Normalization for V
-norm_P = Normalize(vmin=0, vmax=P[N//2, M//2 + 2])  # Normalization for P
+# V = E_max * Lambda/np.pi # Voltage (V)
+# P = (1/2) *(50/123**2) * V**2 # Power (W)
+# # Normalize E_max to its maximum value
+# norm_V = Normalize(vmin=0, vmax=V[N//2, M//2 + 2])  # Normalization for V
+# norm_P = Normalize(vmin=0, vmax=P[N//2, M//2 + 2])  # Normalization for P
 
-# Plot V in a 2D plot
-fig_V, ax_V = plt.subplots()
-im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_V)
-#im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(V[V > 0]), vmax=np.max(V)))
-cbar_V = fig_V.colorbar(im_V, ax=ax_V)
-cbar_V.set_label("Amplitude [V]", fontsize=14)
+# # Plot V in a 2D plot
+# fig_V, ax_V = plt.subplots()
+# im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_V)
+# #im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(V[V > 0]), vmax=np.max(V)))
+# cbar_V = fig_V.colorbar(im_V, ax=ax_V)
+# cbar_V.set_label("Amplitude [V]", fontsize=14)
 
-# Set axis labels and title for V
-ax_V.set_xlim(0.14, 1.1)
-ax_V.set_ylim(0.14, 1.1)
-ax_V.set_xlabel("x [m]", fontsize=14)
-ax_V.set_ylabel("y [m]", fontsize=14)
-#ax_V.set_title("Voltage Distribution (V)", fontsize=14)
+# # Set axis labels and title for V
+# ax_V.set_xlim(0.14, 1.1)
+# ax_V.set_ylim(0.14, 1.1)
+# ax_V.set_xlabel("x [m]", fontsize=14)
+# ax_V.set_ylabel("y [m]", fontsize=14)
+# #ax_V.set_title("Voltage Distribution (V)", fontsize=14)
 
-# Plot P in a 2D plot
-fig_P, ax_P = plt.subplots()
-im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=norm_P)
-#im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(P[P > 0]), vmax=np.max(P)))
-cbar_P = fig_P.colorbar(im_P, ax=ax_P)
-cbar_P.set_label("Puissance [W]", fontsize=14)
+# # Plot P in a 2D plot
+# fig_P, ax_P = plt.subplots()
+# im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=norm_P)
+# #im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(P[P > 0]), vmax=np.max(P)))
+# cbar_P = fig_P.colorbar(im_P, ax=ax_P)
+# cbar_P.set_label("Puissance [W]", fontsize=14)
 
-# Set axis labels and title for P
-ax_P.set_xlim(0.14, 1.1)
-ax_P.set_ylim(0.14, 1.1)
-ax_P.set_xlabel("x [m]", fontsize=14)
-ax_P.set_ylabel("y [m]", fontsize=14)
-#ax_P.set_title("Power Distribution (P)", fontsize=14)
+# # Set axis labels and title for P
+# ax_P.set_xlim(0.14, 1.1)
+# ax_P.set_ylim(0.14, 1.1)
+# ax_P.set_xlabel("x [m]", fontsize=14)
+# ax_P.set_ylabel("y [m]", fontsize=14)
+# #ax_P.set_title("Power Distribution (P)", fontsize=14)
 
-# Show both plots
-plt.show()
+# # Show both plots
+# plt.show()
