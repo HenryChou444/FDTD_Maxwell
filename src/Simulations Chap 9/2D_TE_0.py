@@ -56,13 +56,15 @@ By = np.zeros((N, M-1))  # Magnetic field, last sample is (M-2)
 fig, ax = plt.subplots(figsize=(width_px/dpi, height_px/dpi), dpi=dpi)
 norm_max = Normalize(vmin=-0.4682158550076026, vmax= 0.4682158550076026)
 im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_max)
-cbar = fig.colorbar(im, ax=ax, orientation='horizontal', pad=0.1, shrink=1, aspect=100)
-cbar.set_label("$E_z$ [V/m]", fontsize=14)
-
+cbar = fig.colorbar(im, ax=ax, orientation='horizontal', pad=0.15, shrink=1, aspect=100)
+cbar.set_label("$E_z$ [V/m]", fontsize=25)
+cbar.ax.tick_params(labelsize=20)
 ax.set_xlim(0, (M - 1) * dx)
-ax.set_xlabel("x [m]", fontsize=14)
-ax.set_ylabel("y [m]", fontsize=14)
-ax.set_title("2D FDTD Simulation", fontsize=14)
+ax.set_xlabel("x [m]", fontsize=25)
+ax.tick_params(axis='x', labelsize=20)
+#ax.set_ylabel("y [m]", fontsize=25)
+ax.set_yticklabels([])
+ax.set_title("2D FDTD Simulation", fontsize=25)
 
 # Center the plot and remove extra white space
 fig.tight_layout()
@@ -76,6 +78,19 @@ ax.set_ylim(y2, y1)
 # line2 = ax.axhline(y=y2, color='red', linewidth=5)
 #ax.legend(loc='upper right')
 
+#1D Plot
+beta = 2 * np.pi / Lambda
+fc1 = c / (2*8*dy)
+E_x = abs(0.577*(np.exp(-beta*(x-(M//2)*dx)*(np.sqrt((fc1/f)**2-1)))))
+fig_cut_anim, ax_cut_anim = plt.subplots()
+line_cut, = ax_cut_anim.plot([], [], color="blue")
+line_theory, = ax_cut_anim.plot(x, E_x, color="red", linestyle='--', label="Amplitude théorique")
+ax_cut_anim.set_xlim(0, (M - 1) * dx)
+ax_cut_anim.set_ylim(-0.7, 0.7)  # You may want to update this after the first run
+ax_cut_anim.set_xlabel("x [m]", fontsize=20)
+ax_cut_anim.set_ylabel("$E_z$ [V/m]", fontsize=20)
+ax_cut_anim.set_title("Coupe 1D entre les 2 plaques", fontsize=20)
+ax_cut_anim.grid()
 
 # Reset function to set all vectors to zero
 def reset():
@@ -114,14 +129,18 @@ def update(frame):
             for n in range(1, N - 1): 
                 for m in range(0, M - 1): #0 compris, M-1 exclu
                     By[n, m] = By[n,m] + 1/a *(E[n, m + 1] - E[n, m])
-
+    #if frame == 237: #save the image at frame 237
+        #plt.savefig("2D_TE_0_norm_test.png", dpi=300, bbox_inches='tight')
     im.set_array(E)  # Update the color scale with the new E values
-    return [im], ax.title
+    E_cut = abs(E[N // 2, :])
+    line_cut.set_data(x, E_cut)
+    return [im, line_cut], ax.title
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
+#ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
+ani = FuncAnimation(fig_cut_anim, update, frames=Q, interval=15, blit=False, repeat=False)
 # Save the animation
-ani.save("2D_TE_0_norm_test.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+#ani.save("2D_TE_0_norm_test.mp4", fps=45) #Must save before plt.show() but then additional waiting time
 # Print min and max of E_max
 plt.show()
 # print("E_max min:", np.min(E_max))
@@ -129,60 +148,26 @@ plt.show()
 #print("Animation saved")
 # Show the animation
 
+# Extract the cut of E_max
+cut_start = M // 2
+cut_end = cut_start + 100
+E_max_cut = E_max[N // 2, cut_start:cut_end]
 
-
-
-# # Plot E_max in a 2D plot
-# fig_max, ax_max = plt.subplots()
-
-# # Normalize E_max to its maximum value
-# norm_max = Normalize(vmin=np.percentile(E_max, 5), vmax= E_max[N//2, M//2 + 2])
-# #norm_max = LogNorm(vmin=1e-5, vmax= np.max(E_max))
-# # Create the 2D plot for E_max
-# im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_max)
-# #im_max = ax_max.imshow(E_max, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(E_max[E_max > 0]), vmax=np.max(E_max)))
-# cbar_max = fig_max.colorbar(im_max, ax=ax_max)
-# cbar_max.set_label("Amplitude [V/m]", fontsize=14)
-
-# # Set axis labels and title
-# ax_max.set_xlim(0.14, 1.1)
-# ax_max.set_ylim(0.14, 1.1)
-# ax_max.set_xlabel("x [m]", fontsize=14)
-# ax_max.set_ylabel("y [m]", fontsize=14)
-
-# V = E_max * Lambda/np.pi # Voltage (V)
-# P = (1/2) *(50/123**2) * V**2 # Power (W)
-# # Normalize E_max to its maximum value
-# norm_V = Normalize(vmin=0, vmax=V[N//2, M//2 + 2])  # Normalization for V
-# norm_P = Normalize(vmin=0, vmax=P[N//2, M//2 + 2])  # Normalization for P
-
-# # Plot V in a 2D plot
-# fig_V, ax_V = plt.subplots()
-# im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_V)
-# #im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(V[V > 0]), vmax=np.max(V)))
-# cbar_V = fig_V.colorbar(im_V, ax=ax_V)
-# cbar_V.set_label("Amplitude [V]", fontsize=14)
-
-# # Set axis labels and title for V
-# ax_V.set_xlim(0.14, 1.1)
-# ax_V.set_ylim(0.14, 1.1)
-# ax_V.set_xlabel("x [m]", fontsize=14)
-# ax_V.set_ylabel("y [m]", fontsize=14)
-# #ax_V.set_title("Voltage Distribution (V)", fontsize=14)
-
-# # Plot P in a 2D plot
-# fig_P, ax_P = plt.subplots()
-# im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=norm_P)
-# #im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(P[P > 0]), vmax=np.max(P)))
-# cbar_P = fig_P.colorbar(im_P, ax=ax_P)
-# cbar_P.set_label("Puissance [W]", fontsize=14)
-
-# # Set axis labels and title for P
-# ax_P.set_xlim(0.14, 1.1)
-# ax_P.set_ylim(0.14, 1.1)
-# ax_P.set_xlabel("x [m]", fontsize=14)
-# ax_P.set_ylabel("y [m]", fontsize=14)
-# #ax_P.set_title("Power Distribution (P)", fontsize=14)
-
-# # Show both plots
-# plt.show()
+# Create the x-axis for the cut
+x_cut = np.linspace(0, (cut_end - cut_start - 1) * dx, cut_end - cut_start)
+beta = 2 * np.pi / Lambda
+fc1 = c / (2*8*dy)
+#E_x = abs(E_max[N // 2, M//2]*2*np.sin(beta*4*dy*fc1/f)*np.exp(-beta*x_cut*np.sqrt((fc1/f)**2-1)))
+E_x = abs(E_max[N // 2, M//2]*(np.exp(-beta*x_cut*(np.sqrt((fc1/f)**2-1)))))
+# Plot the cut and the theoretical value
+fig_cut, ax_cut = plt.subplots()
+ax_cut.plot(x_cut, E_max_cut, label="$|E_z|$ FDTD", color="blue", linewidth=2, linestyle='-')
+label = r"$\tilde{E}_0 \cdot e^{-\beta x \sqrt{\left( \frac{f_{c1}}{f} \right)^2 - 1}}$"
+ax_cut.plot(x_cut, E_x, label=label, color="red", linewidth=2, linestyle='--')
+#ax_cut.plot(x_cut, E_x, label= "$ \tilde{E_0} \cdot e^{-\beta x \sqrt{\left( \frac{f_{c1}}{f} \right)^2 - 1}}$", color="red", linewidth=2, linestyle='--')
+ax_cut.set_xlabel("Distance à la source [m]", fontsize=25)
+ax_cut.set_ylabel("Amplitude [V/m]", fontsize=25)
+ax_cut.tick_params(axis='both', which='major', labelsize=20)
+ax_cut.grid()
+ax_cut.legend(fontsize=20)
+plt.show()
