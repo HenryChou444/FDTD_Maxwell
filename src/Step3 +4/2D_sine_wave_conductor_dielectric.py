@@ -24,9 +24,6 @@ t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
 epsilon_r = np.ones((N, M))
 sigma = np.zeros((N, M))  # Conductivity grid
 
-# Add perfect conductor wall
-
-
 # Create Jz
 omega = 2 * np.pi * f  # Angular frequency
 J = np.zeros((N, M))  # Current density
@@ -97,7 +94,7 @@ def update(frame):
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
 # Save the animation
-ani.save("2D_sine_source_conductor_dielectric_jet.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+#ani.save("2D_sine_source_conductor_dielectric_jet.mp4", fps=45) #Must save before plt.show() but then additional waiting time
 plt.show()
 #print("Animation saved")
 # Show the animation
@@ -134,13 +131,13 @@ fig_V, ax_V = plt.subplots()
 im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm_V)
 #im_V = ax_V.imshow(V, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(V[V > 0]), vmax=np.max(V)))
 cbar_V = fig_V.colorbar(im_V, ax=ax_V)
-cbar_V.set_label("Amplitude [V]", fontsize=14)
+cbar_V.set_label("Amplitude [V]", fontsize=20)
 
 # Set axis labels and title for V
 ax_V.set_xlim(0.14, 1.1)
 ax_V.set_ylim(0.14, 1.1)
-ax_V.set_xlabel("x [m]", fontsize=14)
-ax_V.set_ylabel("y [m]", fontsize=14)
+ax_V.set_xlabel("x [m]", fontsize=20)
+ax_V.set_ylabel("y [m]", fontsize=20)
 #ax_V.set_title("Voltage Distribution (V)", fontsize=14)
 
 # Plot P in a 2D plot
@@ -148,13 +145,13 @@ fig_P, ax_P = plt.subplots()
 im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=norm_P)
 #im_P = ax_P.imshow(P, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm=LogNorm(vmin=np.min(P[P > 0]), vmax=np.max(P)))
 cbar_P = fig_P.colorbar(im_P, ax=ax_P)
-cbar_P.set_label("Puissance [W]", fontsize=14)
+cbar_P.set_label("Puissance [W]", fontsize=20)
 
 # Set axis labels and title for P
 ax_P.set_xlim(0.14, 1.1)
 ax_P.set_ylim(0.14, 1.1)
-ax_P.set_xlabel("x [m]", fontsize=14)
-ax_P.set_ylabel("y [m]", fontsize=14)
+ax_P.set_xlabel("x [m]", fontsize=20)
+ax_P.set_ylabel("y [m]", fontsize=20)
 #ax_P.set_title("Power Distribution (P)", fontsize=14)
 
 # Show both plots

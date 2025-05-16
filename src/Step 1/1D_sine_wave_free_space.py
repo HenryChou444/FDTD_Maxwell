@@ -68,12 +68,12 @@ ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=True)
 
 q_specific = 90  # Replace with the desired time step
 plt.figure()  # Create a new figure
-plt.plot(x, E[q_specific, :])
+plt.plot(x, E[q_specific, :], linewidth=3)
 plt.xlim(0, (M - 1) * dx)  # Same x-axis limits as the animation
 plt.ylim(-1.5, 1.5)  # Same y-axis limits as the animation
-plt.xlabel("x [m]",fontsize=24)
-plt.ylabel("E [V/m]", fontsize=24)
-plt.tick_params(axis='both', which='major', labelsize=18)  # Adjust the font size as needed
+plt.xlabel("x [m]",fontsize=30)
+plt.ylabel("E [V/m]", fontsize=30)
+plt.tick_params(axis='both', which='major', labelsize=25)  # Adjust the font size as needed
 #plt.legend()
 #plt.grid()
 

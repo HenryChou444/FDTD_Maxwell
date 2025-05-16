@@ -165,9 +165,9 @@ ax_cut.plot(x_cut, E_max_cut, label="$|E_z|$ FDTD", color="blue", linewidth=2, l
 label = r"$\tilde{E}_0 \cdot e^{-\beta x \sqrt{\left( \frac{f_{c1}}{f} \right)^2 - 1}}$"
 ax_cut.plot(x_cut, E_x, label=label, color="red", linewidth=2, linestyle='--')
 #ax_cut.plot(x_cut, E_x, label= "$ \tilde{E_0} \cdot e^{-\beta x \sqrt{\left( \frac{f_{c1}}{f} \right)^2 - 1}}$", color="red", linewidth=2, linestyle='--')
-ax_cut.set_xlabel("Distance à la source [m]", fontsize=25)
-ax_cut.set_ylabel("Amplitude [V/m]", fontsize=25)
-ax_cut.tick_params(axis='both', which='major', labelsize=20)
+ax_cut.set_xlabel("Distance à la source [m]", fontsize=35)
+ax_cut.set_ylabel("Amplitude [V/m]", fontsize=35)
+ax_cut.tick_params(axis='both', which='major', labelsize=35)
 ax_cut.grid()
-ax_cut.legend(fontsize=20)
+ax_cut.legend(fontsize=35)
 plt.show()

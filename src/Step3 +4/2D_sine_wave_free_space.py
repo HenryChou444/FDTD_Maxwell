@@ -174,11 +174,11 @@ E_x = 120*np.pi * np.sqrt(beta/(8*np.pi*x_cut))* abs(J[source_position_y, source
 # Plot the cut
 fig_cut, ax_cut = plt.subplots()
 ax_cut.plot(x_cut, E_max_cut, label="$|E_z|$ FDTD", color="blue")
-ax_cut.set_xlabel("Distance à la source [m]", fontsize=14)
-ax_cut.set_ylabel("Amplitude [V/m]", fontsize=14)
+ax_cut.set_xlabel("Distance à la source [m]", fontsize=20)
+ax_cut.set_ylabel("Amplitude [V/m]", fontsize=20)
 label = r"$Z_0 \cdot \sqrt{\frac{\beta}{8\pi x}}\cdot |I|$"
 ax_cut.plot(x_cut, E_x, label=label, color="red", linewidth=2, linestyle='--')
-ax_cut.legend(fontsize=14)
+ax_cut.legend(fontsize=20)
 ax_cut.grid()
 
 plt.show()
