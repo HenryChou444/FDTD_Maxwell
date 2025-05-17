@@ -103,38 +103,38 @@ def update(frame):
     #ax.set_title(f"1D FDTD - Frame {frame}")
     #print(f"Updated frame {frame}")
 
-    # Figure at a specific time step cannot be run at the same time as the animation
-    # if frame == 369 :  # Replace with the desired time step
-    #     # Create a new figure
-    #     fig_new, ax_new = plt.subplots()
-    #     #x_cut = np.linspace((wall_start-1)*dx, (wall_start + wall_width+1) * dx, M//3)  # Space grid for the new figure
-    #     #alpha = 2 * np.pi * f * np.sqrt(e_r*epsilon_0*mu_0 / 2) * np.sqrt(np.sqrt(1 + (0.1/(2*np.pi*f*e_r*epsilon_0))**2)-1)  # Attenuation constant 
-    #     E_cut = E_max[0, wall_start] * np.exp(-alpha*(x_cut - wall_start*dx))  # Exponential decay
-    #     #print(f"E_max = {E_max[0, wall_start]}") # 0.7110749159521274
-    #     ax_new.plot(x, E[0, :], label="$E_z$ FDTD")
-    #     # label = r"$E_0 e^{-\alpha x}$"
-    #     ax_new.plot(x_cut, E_cut, label=label, color="red", linewidth=2, linestyle='--')
-    #     ax_new.set_xlim((M//3)*dx, (M - 1) * dx)  # Same x-axis limits as the animation
-    #     ax_new.set_ylim(-1.5, 1.5)  # Same y-axis limits as the animation
-    #     ax_new.set_xlabel("x [m]", fontsize=30)
-    #     ax_new.set_ylabel("E [V/m]", fontsize=30)
-    #     ax_new.tick_params(axis='both', which='major', labelsize=25)
-    #     ax_new.legend(fontsize=25)
-        
-    #     # Add the rectangle patch for the wall
-    #     wall_new = Rectangle(((wall_start - 1) * dx, -wall_height), wall_width * dx, 2 * wall_height,
-    #                         linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
-    #     ax_new.add_patch(wall_new)
+    #Figure at a specific time step cannot be run at the same time as the animation
+    if frame == 369 :  # Replace with the desired time step
+        # Create a new figure
+        fig_new, ax_new = plt.subplots()
+        #x_cut = np.linspace((wall_start-1)*dx, (wall_start + wall_width+1) * dx, M//3)  # Space grid for the new figure
+        #alpha = 2 * np.pi * f * np.sqrt(e_r*epsilon_0*mu_0 / 2) * np.sqrt(np.sqrt(1 + (0.1/(2*np.pi*f*e_r*epsilon_0))**2)-1)  # Attenuation constant 
+        E_cut = E_max[0, wall_start] * np.exp(-alpha*(x_cut - wall_start*dx))  # Exponential decay
+        #print(f"E_max = {E_max[0, wall_start]}") # 0.7110749159521274
+        ax_new.plot(x, E[0, :], label="$E_z$ FDTD")
+        # label = r"$E_0 e^{-\alpha x}$"
+        ax_new.plot(x_cut, E_cut, label=label, color="red", linewidth=2, linestyle='--')
+        ax_new.set_xlim((M//3)*dx, (M - 1) * dx)  # Same x-axis limits as the animation
+        ax_new.set_ylim(-1.5, 1.5)  # Same y-axis limits as the animation
+        ax_new.set_xlabel("x [m]", fontsize=30)
+        ax_new.set_ylabel("E [V/m]", fontsize=30)
+        ax_new.tick_params(axis='both', which='major', labelsize=25)
+        ax_new.legend(fontsize=25)
+        ax_new.grid(which='both', linestyle=':', linewidth=0.8)
+        # Add the rectangle patch for the wall
+        wall_new = Rectangle(((wall_start - 1) * dx, -wall_height), wall_width * dx, 2 * wall_height,
+                            linewidth=1, edgecolor='red', facecolor='none', linestyle='--', label="Wall")
+        ax_new.add_patch(wall_new)
 
-    #     # Show the new plot
-    #     plt.show()
+        # Show the new plot
+        plt.show()
     return animated_source, ax.title
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
 
 # Save the animation
-ani.save("1D_exp_decay.mp4", fps=60)
+#ani.save("1D_exp_decay.mp4", fps=60)
 
 # Show the animation
 
