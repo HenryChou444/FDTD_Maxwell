@@ -61,25 +61,24 @@ def reset():
 
 # Animation function
 def update(frame):
-
-    if frame == 0:  # Reset at the start of the animation
+    if frame == 0:  # Reinitialisation au début de l'animation
         reset()
     if frame > 0:
-        J[source_position_y, source_position_x] = -np.sin(omega * frame * dt) # Sine wave source
+        J[source_position_y, source_position_x] = -np.sin(omega * frame * dt) # Source sinusoidale
+        # Si la source est à l'intérieur du conducteur parfait, on fixe E au lieu de J
+        
+        # Calculs FDTD
         for n in range(1, N - 1):
             for m in range(1, M - 1): #1 compris, M-1 exclu
-                if sigma[n, m] == -1: #use -1 instead of +inf
+                if sigma[n, m] == -1: # -1 est un flag pour les conducteurs parfaits
                     E[n, m] = 0
                 elif sigma[n, m] == 0:
                     E[n, m] = E[n, m] + 1/a/epsilon_r[n,m] * (-Bx[n, m] + Bx[n-1, m] + By[n , m] - By[n, m-1]) - (J[n,m])/epsilon_r[n,m] #Normalized J
-                    if abs(E[n, m]) > E_max[n, m]:
-                        E_max[n, m] = abs(E[n, m])
+
                 else:
                     E[n, m] = (1- sigma[n,m]/epsilon_r[n,m])*E[n, m] + 1/a/epsilon_r[n,m] * (-Bx[n, m] + Bx[n-1, m] + By[n , m] - By[n, m-1])
-        print(f"E[M//2, M//2] at frame {frame}: {E[M//2, M//2]}")
 
-
-        if frame < Q-1: #Ne calcule pas la dernière ligne de B (pas utile pour trouver E)
+        if frame < Q-1: #Ne calcule pas la derniere ligne de B (pas utile pour trouver E)
             for n in range(0, N - 1): 
                 for m in range(1, M - 1): #0 compris, M-1 exclu
                     Bx[n, m] = Bx[n,m] - 1/a *(E[n+1, m] - E[n, m]) 
@@ -88,7 +87,7 @@ def update(frame):
                 for m in range(0, M - 1): #0 compris, M-1 exclu
                     By[n, m] = By[n,m] + 1/a *(E[n, m + 1] - E[n, m])
 
-    im.set_array(E)  # Update the color scale with the new E values
+    im.set_array(E)  # Mise à jour du graphique 2D
     return [im], ax.title
 
 # Create the animation
