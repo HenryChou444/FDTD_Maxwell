@@ -14,22 +14,22 @@ dx = Lambda / 20  # Spatial step (m)
 dy = Lambda / 20  # Spatial step (m)
 a = 2
 dt = dx / (a * c)  # Time step (s)
-e_r = 4 # Relative permittivity of ground
+e_r = 1 # Relative permittivity of ground
 M = 200 # Number of x steps
 N = 200 # Number of y steps
 Q = 400  # Number of time steps
 x = np.linspace(0, (M - 1) * dx, M)  # Space grid
 y = np.linspace(0, (M - 1) * dy, N)  # Not really used, but clearer that way
 t = np.linspace(0, (Q - 1) * dt, Q)  # Time grid
-epsilon_r = np.ones((N, M))
+epsilon_r = np.ones((N, M)) * 4
 #epsilon_r[150:199, 0:199] = e_r  # Set the permittivity of the dielectric region
 sigma = np.zeros((N, M))  # Conductivity grid
 
 
 # Interface parameters
-angle_deg = 15  # Angle of the interface in degrees
+angle_deg = 45  # Angle of the interface in degrees
 angle_rad = np.deg2rad(angle_deg)
-y_start = 100  # Start at the bottom
+y_start = 0  # Start at the bottom
 
 
 # Compute y_end so the interface spans the whole x axis
@@ -55,6 +55,7 @@ J = np.zeros((N, M))  # Current density
 # Create Fields
 E = np.zeros((N, M))  # Electric field, last sample is (M-1)
 E_max = np.zeros((N, M))  # Electric field amplitude
+E_figure = np.zeros((N, M))  # Electric field figure
 Bx = np.zeros((N-1, M))  #
 By = np.zeros((N, M-1))  # Magnetic field, last sample is (M-2)
 
@@ -63,13 +64,13 @@ By = np.zeros((N, M-1))  # Magnetic field, last sample is (M-2)
 fig, ax = plt.subplots(figsize=(10, 8))
 norm = Normalize(vmin=-1, vmax=1)  # Initial normalization (vmax will be updated dynamically)
 im = ax.imshow(E, extent=[0, (M - 1) * dx, 0, (N - 1) * dy], origin="lower", cmap="jet", norm = norm)
-cbar = fig.colorbar(im, ax=ax)
+cbar = fig.colorbar(im, ax=ax, orientation='vertical', pad=0.1, shrink=1, aspect=50)
 cbar.set_label("$E_z$ [V/m]", fontsize=20)
 ax.set_xlim(0, (M - 1) * dx)
 ax.set_ylim(0, (N - 1) * dy)
 ax.set_xlabel("x [m]", fontsize=20)
 ax.set_ylabel("y [m]", fontsize=20)
-ax.set_title("2D FDTD Simulation", fontsize=20)
+#ax.set_title("2D FDTD Simulation", fontsize=20)
 
 # Create a mask for the dielectric zone
 dielectric_mask = (epsilon_r == e_r).astype(float)
@@ -99,7 +100,7 @@ def update(frame):
     if frame > 0:
         #Create planar wave source
         for m in range(50, 150, 1):
-            if frame < 40 :
+            if frame < 39 :
                 E[199, m] = np.sin(omega * frame * dt)  # Sine wave source
             else :
                 E[199, m] = 0
@@ -113,7 +114,7 @@ def update(frame):
                         E_max[n, m] = abs(E[n, m])
                 else:
                     E[n, m] = (1- sigma[n,m]/epsilon_r[n,m])*E[n, m] + 1/a/epsilon_r[n,m] * (-Bx[n, m] + Bx[n-1, m] + By[n , m] - By[n, m-1])
-        print(f"E[M//2, M//2] at frame {frame}: {E[M//2, M//2]}")
+        print(f"E[N//2, M//2] at frame {frame}: {E[N//2, M//2]}")
 
 
         if frame < Q-1: #Ne calcule pas la dernière ligne de B (pas utile pour trouver E)
@@ -124,14 +125,15 @@ def update(frame):
             for n in range(1, N - 1): 
                 for m in range(0, M - 1): #0 compris, M-1 exclu
                     By[n, m] = By[n,m] + 1/a *(E[n, m + 1] - E[n, m])
-
+        if frame == 399 : #save the image
+            plt.savefig("2D_planar_wave_total_reflexion.png", dpi=300, bbox_inches='tight')
     im.set_array(E)  # Update the color scale with the new E values
     return [im], ax.title
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=Q, interval=15, blit=False, repeat=False)
 # Save the animation
-ani.save("2D_planar_wave_lower_start.mp4", fps=45) #Must save before plt.show() but then additional waiting time
+ani.save("2D_total_reflexion_3.mp4", fps=45) #Must save before plt.show() but then additional waiting time
 plt.show()
 #print("Animation saved")
 # Show the animation
